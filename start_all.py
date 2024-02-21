@@ -1,6 +1,6 @@
 import os
 
-path_projects = rf'C:\\Users\{os.getlogin()}\Downloads\Webscraping_projects\\'
+path_projects = rf'C:\\Users\{os.getlogin()}\Documents\Webscraping_projects\\'
 path_env = 'python'
 
 def start_script(title: str, path_script: str, position_in_line: int = 0):
