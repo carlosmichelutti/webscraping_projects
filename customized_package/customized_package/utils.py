@@ -5,37 +5,6 @@ import mysql.connector
 import pandas as pd
 import pyexcel
 import os
-import re
-
-# class SeleniumUtils:
-#     @staticmethod
-#     def selenium_to_requests(driver, cookies: bool = False):
-#         '''
-#         - driver  -> Sessão webdriver para coletar cookies
-#         - cookies -> Se deve retornar cookies ou não, como segundo elemento do return
-#         '''
-#         session = requests.Session()
-#         for cookie in driver.get_cookies():
-#             session.cookies.set(cookie['name'], cookie['value'])
-#         if not cookies:
-#             return session
-#         return session, driver.get_cookies()
-
-# class Utilidades:
-
-#     @staticmethod
-#     def limpar_string(texto: str) -> str:
-#         '''
-#         Substitui todos os caracteres não alfanuméricos e não espaços em branco por nada
-#         '''
-#         return re.sub(r'[^\w\s]', '', texto)
-
-#     @staticmethod
-#     def remover_caracteres_nao_numericos(texto: str) -> str:
-#         '''
-#         - texto -> Aceita um texto, e remove tudo que não for número
-#         '''
-#         return re.sub(r'\D', '', texto)
 
 class Database:
 
@@ -142,30 +111,30 @@ class Database:
 
 # class ConversoresDeArquivos:
 
-    @staticmethod
-    def converter_para_xlsx(rename, actual_path):
+    # @staticmethod
+    # def converter_para_xlsx(rename, actual_path):
 
-        if os.path.isdir(actual_path):
-            arquivos = os.listdir(actual_path)
+        # if os.path.isdir(actual_path):
+        #     arquivos = os.listdir(actual_path)
 
-            for arquivo in arquivos:
-                dividir_nome = arquivo.split('.')[-1]
-                if dividir_nome == 'xls':
-                    local_antigo_arqvuivo = actual_path + os.sep + arquivo
-                    renomear_nome = ''.join(rename + '.'+dividir_nome).replace('.xls', '.xlsx')
-                    local_novo_arquivo = actual_path + os.sep + renomear_nome
+        #     for arquivo in arquivos:
+        #         dividir_nome = arquivo.split('.')[-1]
+        #         if dividir_nome == 'xls':
+        #             local_antigo_arqvuivo = actual_path + os.sep + arquivo
+        #             renomear_nome = ''.join(rename + '.'+dividir_nome).replace('.xls', '.xlsx')
+        #             local_novo_arquivo = actual_path + os.sep + renomear_nome
 
-                    if not os.path.isdir(local_antigo_arqvuivo):
-                        print('CONVERTENDO PARA XLSX')
-                        pyexcel.save_book_as(
-                            file_name=local_antigo_arqvuivo,
-                            dest_file_name=local_novo_arquivo
-                        )
+        #             if not os.path.isdir(local_antigo_arqvuivo):
+        #                 print('CONVERTENDO PARA XLSX')
+        #                 pyexcel.save_book_as(
+        #                     file_name=local_antigo_arqvuivo,
+        #                     dest_file_name=local_novo_arquivo
+        #                 )
 
-                        os.remove(local_antigo_arqvuivo)
+        #                 os.remove(local_antigo_arqvuivo)
 
-                    print(f'Arquivo: {arquivo} Convertido para: {renomear_nome}')
+        #             print(f'Arquivo: {arquivo} Convertido para: {renomear_nome}')
         
-        return actual_path + os.sep + renomear_nome
+        # return actual_path + os.sep + renomear_nome
 
         #timeerror

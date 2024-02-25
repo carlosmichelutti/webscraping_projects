@@ -1,5 +1,6 @@
 from _load_env import db_user, db_pass, db_host, db_port, db_name
-from utils_py.utils import Database
+
+from customized_package.utils import Database
 
 from datetime import datetime, timedelta
 from colorama import Fore
