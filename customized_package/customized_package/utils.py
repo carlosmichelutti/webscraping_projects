@@ -9,13 +9,13 @@ import os
 class Database:
 
     def __init__(
-            self: object,
-            db_user: str,
-            db_pass: str,
-            db_host: str,
-            db_port: str,
-            db_name: str,
-        ) -> None:
+        self: object,
+        db_user: str,
+        db_pass: str,
+        db_host: str,
+        db_port: str,
+        db_name: str,
+    ) -> None:
 
         """
             Class initiator for mysql database connection.
@@ -108,33 +108,3 @@ class Database:
 
         except Exception as e:
             print(f'Query {query} invalid, please review. Error {e}.')
-
-# class ConversoresDeArquivos:
-
-    # @staticmethod
-    # def converter_para_xlsx(rename, actual_path):
-
-        # if os.path.isdir(actual_path):
-        #     arquivos = os.listdir(actual_path)
-
-        #     for arquivo in arquivos:
-        #         dividir_nome = arquivo.split('.')[-1]
-        #         if dividir_nome == 'xls':
-        #             local_antigo_arqvuivo = actual_path + os.sep + arquivo
-        #             renomear_nome = ''.join(rename + '.'+dividir_nome).replace('.xls', '.xlsx')
-        #             local_novo_arquivo = actual_path + os.sep + renomear_nome
-
-        #             if not os.path.isdir(local_antigo_arqvuivo):
-        #                 print('CONVERTENDO PARA XLSX')
-        #                 pyexcel.save_book_as(
-        #                     file_name=local_antigo_arqvuivo,
-        #                     dest_file_name=local_novo_arquivo
-        #                 )
-
-        #                 os.remove(local_antigo_arqvuivo)
-
-        #             print(f'Arquivo: {arquivo} Convertido para: {renomear_nome}')
-        
-        # return actual_path + os.sep + renomear_nome
-
-        #timeerror
