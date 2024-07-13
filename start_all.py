@@ -4,6 +4,7 @@ path_projects = rf'C:\\Users\{os.getlogin()}\Documents\Webscraping_projects\\'
 path_env = 'python'
 
 def start_script(title: str, path_script: str, position_in_line: int = 0):
+    
     """
         Function that returns the command to start the script in the new tab.
 
