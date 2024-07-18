@@ -123,7 +123,7 @@ class VideoGamesScraping:
                                 )
                                 self.tasks.append(task)  
 
-                        if self.tasks:   
+                        if self.tasks:
                             sleep(30 * 1 if not tries else 30 * tries)
                             tries += 1
                         else:
