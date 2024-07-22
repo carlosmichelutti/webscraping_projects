@@ -3,8 +3,6 @@ from typing import Literal
 from time import sleep
 import mysql.connector
 import pandas as pd
-import pyexcel
-import os
 
 class Database:
 
