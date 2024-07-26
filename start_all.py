@@ -15,10 +15,7 @@ def start_script(title: str, path_script: str, position_in_line: int = 0):
             position_in_line: int - Queue position to run the script.
     """
 
-    return f'''
-    new-tab cmd.exe /k title {title} ^& {path_env} {
-        os.path.join(path_projects, path_script)} {position_in_line}
-    '''.strip()
+    return f"new-tab cmd.exe /k title {title} ^& {path_env} {os.path.join(path_projects, path_script)} {position_in_line}"
 
 scripts = [
     start_script('celphone_scraping', 'webscraping_projects\\celphone_scaping.py', 0), # webscraping cell phones with selenium and requests
