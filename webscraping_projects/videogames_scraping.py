@@ -142,7 +142,8 @@ class VideoGamesScraping:
             Parameters
             ----------
                 page: int -> Page number to obtain the data.
-                session: aiohttp.ClientSession -> Session to make the request asyncio.            
+                session: aiohttp.ClientSession -> Session to make the request asyncio.
+                            
             Returns
             -------
                 result_data: dict -> Data obtained from the page.
