@@ -1,1 +1,1 @@
-"python.exe" "C:\Users\Carlos\Documents\Webscraping_projects\start_all.py"
+"python.exe" "C:\Users\Carlos\Documents\GitHub\Webscraping_projects\start_all.py"
