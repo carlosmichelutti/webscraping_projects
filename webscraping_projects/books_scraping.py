@@ -169,7 +169,7 @@ class BooksScraping:
                         sleep(10)
 
     def create_spreadsheet(self: object) -> None:
-        
+
         self.dataframe_books = pd.concat([self.dataframe_books, pd.DataFrame(self.books)], ignore_index=True)
 
     def clean_database(self: object) -> None:
