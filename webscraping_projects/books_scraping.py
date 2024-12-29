@@ -1,17 +1,7 @@
-from _load_env import (
-    db_user,
-    db_pass,
-    db_host,
-    db_port,
-    db_name
-)
-
-from customized_package.utils import Database
-
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from time import sleep, time
 from colorama import Fore
-from time import sleep
 import pandas as pd
 import requests
 import aiocron
@@ -28,14 +18,6 @@ class BooksScraping:
 
         self.URL: str = 'https://books.toscrape.com'
 
-        self.database: Database = Database(
-            db_user=db_user,
-            db_pass=db_pass,
-            db_host=db_host,
-            db_port=db_port,
-            db_name=db_name
-        )
-
         self.session: requests.Session = requests.Session()
         self.session.headers.update(
             {
@@ -43,27 +25,22 @@ class BooksScraping:
             }
         )
 
-        self.dataframe_books: pd.DataFrame = pd.DataFrame()
-
         self.categories: list = []
 
         self.books: list = []
 
     def start(self: object) -> None:
 
-        self.get_all_categories()
+        self.get_categories()
         self.scraping_books()
-        self.create_spreadsheet()
-        self.clean_database()
-        self.insert_data_to_database()
 
-    def get_all_categories(self: object) -> None:
+    def get_categories(self: object) -> None:
 
         tries = 0
         while True:
             if tries == 3:
                 raise Exception(
-                    'After 3 attempts, it was not possible to collect all categories.'
+                    'After 3 attempts, it was not possible to collect the categories.'
                 )
 
             try:
@@ -74,22 +51,22 @@ class BooksScraping:
 
                 if response.status_code == 200:
                     response = BeautifulSoup(response.content, 'html.parser')
-                    for category in response.select('div.side_categories a[href*="catalogue/category/books"]'):
+                    for category in response.select('div.side_categories ul:nth-child(2) a[href*="catalogue/category/books"]'):
                         self.categories.append(
                             {
-                                'category': category.text.strip() if not category.text.strip() == 'Books' else 'all_books',
+                                'category': category.text.strip(),
                                 'url': (self.URL + '/' + category['href']).replace('/index.html', '').strip(),
                                 'books': []
                             }
                         )
                     break
 
-                print(f'Attempt {tries} to collect all categories failed. Trying again...')
+                print(f'Attempt {tries} to collect the categories failed. Trying again...')
                 tries += 1
                 sleep(10)
 
             except Exception as e:
-                print(f'Attempt {tries} to collect all categories failed. Error: {e}. Trying again...')
+                print(f'Attempt {tries} to collect the categories failed. Error: {e}. Trying again...')
                 tries += 1
                 sleep(10)
 
@@ -154,7 +131,7 @@ class BooksScraping:
                                         'book_title': book.select_one('h3 a')['title'],
                                         'book_price': float(re.sub('[^\d.]', '', book.select_one('div.product_price p.price_color').text)),
                                         'book_image': self.URL + '/media' + book.select_one('div.image_container img')['src'].split('/media')[-1],
-                                        'book_rating': '',
+                                        'book_rating': ''
                                     }
                                 )
                             break
@@ -167,52 +144,6 @@ class BooksScraping:
                         print(f'Attempt {tries} to collect books from the category {category["category"]} and page {page} failed. Error: {e}. Trying again...')
                         tries += 1
                         sleep(10)
-
-    def create_spreadsheet(self: object) -> None:
-
-        self.dataframe_books = pd.concat([self.dataframe_books, pd.DataFrame(self.books)], ignore_index=True)
-
-    def clean_database(self: object) -> None:
-
-        tries = 0
-        while True:
-            if tries == 3:
-                raise Exception(
-                    'After 3 attempts, it was not possible to clean the database.'
-                )
-
-            try:
-                self.database.execute_query_to_clean_database(
-                    'TRUNCATE TABLE mydatabase.books_scraping;'
-                )
-
-            except Exception as e:
-                print(f'Attempt {tries} to clean the database failed. Error: {e}. Trying again...')
-                tries += 1
-                sleep(10)
-            else:
-                break
-
-    def insert_data_to_database(self: object) -> None:
-
-        tries = 0
-        while True:
-            if tries == 3:
-                raise Exception(
-                    'After 3 attempts, it was not possible to insert the data into the database.'
-                )
-
-            try:
-                self.database.insert_data(
-                    data=self.dataframe_books, table_name='books_scraping', if_exists='replace'
-                )
-
-            except Exception as e:
-                print(f'Attempt {tries} to insert the data into the database failed. Error: {e}. Trying again...')
-                tries += 1
-                sleep(10)
-            else:
-                break
 
 if len(sys.argv) > 1:
     if datetime.now().second < 50:
@@ -228,28 +159,31 @@ else:
 print(f'This script will start at {datetime.strptime(cron, "%M %H * * *").strftime("%H:%M")}.')
 
 @aiocron.crontab(cron, start=True)
-async def start_all_books():
+async def start_scraping_books():
+
+    init_time = time()
 
     try:
-        requests_bot = BooksScraping()
+        robs = BooksScraping()
 
-        requests_bot.start()
+        robs.start()
 
     except Exception as e:
         print(f'Fail of the scraping process. Error: {e}.')
+
     else:
-        print('Scraping process sucessfully.\n')
+        print(f'Scraping process successfully completed in {Fore.GREEN}{time() - init_time}{Fore.RESET} seconds.')
+
     finally:
         folder_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         directory_report = folder_directory + os.sep + 'TMP' + os.sep + 'books_scraping'
-
         if not os.path.exists(directory_report):
             os.makedirs(directory_report)
 
-        print(f'Saving the collected data in an excel report in the {Fore.GREEN}"{directory_report}"{Fore.RESET} directory.\n')
+        print(f'Saving the collected data in an excel report in the {Fore.GREEN}"{directory_report}"{Fore.RESET} directory.')
         with pd.ExcelWriter(directory_report + os.sep + 'books_scraping.xlsx') as writer:
-            dataframe = pd.DataFrame(requests_bot.books)
-            dataframe.to_excel(writer, index=False, sheet_name='All books')
+            dataframe = pd.DataFrame(robs.books)
+            dataframe.to_excel(writer, index=False, sheet_name='books')
 
 loop = asyncio.get_event_loop()
 
