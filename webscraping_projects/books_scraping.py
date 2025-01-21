@@ -121,7 +121,7 @@ class BooksScraping:
         """
 
         for index, category in enumerate(self.categories):
-            print(f'Collecting books from the {category["category"]} category. {index + 1} of {len(self.categories)} categories...')
+            print(f'Collecting books from the {category["category"].ljust(20)} category. {index + 1} of {len(self.categories)} categories...')
             attempts = 0
             while True:
                 if attempts == 3:
@@ -156,7 +156,6 @@ class BooksScraping:
                     sleep(10)
 
             for page in range(1, self.pages + 1):
-                print(f'Collecting books from page {page} of {self.pages} total pages...')
                 attempts = 0
                 while True:
                     if attempts == 3:
@@ -197,9 +196,37 @@ additional_minutes = 1 + int(sys.argv[1]) if len(sys.argv) > 1 else 1
 if datetime.now().second >= 50:
     additional_minutes += 1
 cron = (datetime.now() + timedelta(minutes=additional_minutes)).strftime('%M %H * * *')
+print(f'This script will start at {datetime.strptime(cron, "%M %H * * *").strftime("%H:%M")}.')
 
 @aiocron.crontab(cron, start=True)
-async def start_scraping_books():
+async def start_scraping_books_initial():
+
+    init_time = time()
+
+    try:
+        bot = BooksScraping()
+
+        bot.start()
+
+    except Exception as e:
+        print(f'Fail of the scraping process. Error: {e}.')
+
+    else:
+        print(f'Scraping process successfully completed in {Fore.GREEN}{time() - init_time}{Fore.RESET} seconds.')
+
+    finally:
+        directory_report = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'TMP', 'books_scraping')
+        os.makedirs(directory_report, exist_ok=True)
+
+        print(f'Saving the collected data in an excel report in the {Fore.GREEN}"{directory_report}"{Fore.RESET} directory.')
+        with pd.ExcelWriter(os.path.join(directory_report, 'books_scraping.xlsx')) as writer:
+            dataframe = pd.DataFrame(bot.books)
+            dataframe.to_excel(writer, index=False, sheet_name='books')
+        
+        start_scraping_books_initial.stop()
+
+@aiocron.crontab('0 8 * * *', start=True)
+async def start_scraping_books_recursively():
 
     init_time = time()
 
