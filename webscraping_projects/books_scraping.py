@@ -12,18 +12,54 @@ import re
 
 class BooksScraping:
 
+    """
+        Class that scrapes all the books.
+
+        Attributes
+        ----------
+        session: requests.Session
+            A request session object used to store cookies and request history.
+
+        URL: str
+            The URL of the website to scrape.
+
+        categories: list
+            A list that stores all available categories.
+
+        books: list
+            A list that stores all scraped books.
+
+        Methods
+        -------
+            __init__()
+                Constructor that initializes the necessary variables.
+
+            start()
+                Function responsible for controlling the scraping process.
+
+            get_categories()
+                Function that collects all available categories.
+
+            scraping_books()
+                Function that collects all books from all categories.
+    """
+
+    session: requests.Session = requests.Session()
+    session.headers.update(
+        {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        }
+    )
+
     def __init__(
         self: object
     ) -> None:
 
-        self.URL: str = 'https://books.toscrape.com'
+        """
+            Constructor that initializes the necessary variables.
+        """
 
-        self.session: requests.Session = requests.Session()
-        self.session.headers.update(
-            {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            }
-        )
+        self.URL: str = 'https://books.toscrape.com'
 
         self.categories: list = []
 
@@ -31,16 +67,24 @@ class BooksScraping:
 
     def start(self: object) -> None:
 
+        """
+            Function responsible for controlling the scraping process.
+        """
+
         self.get_categories()
         self.scraping_books()
 
     def get_categories(self: object) -> None:
 
-        tries = 0
+        """
+            Function that collects all available categories.
+        """
+
+        attempts = 0
         while True:
-            if tries == 3:
+            if attempts == 3:
                 raise Exception(
-                    'After 3 attempts, it was not possible to collect the categories.'
+                    'After 3 failed attempts, it was not possible to collect all categories.'
                 )
 
             try:
@@ -61,24 +105,28 @@ class BooksScraping:
                         )
                     break
 
-                print(f'Attempt {tries} to collect the categories failed. Trying again...')
-                tries += 1
+                print(f'Attempt {attempts} to collect all categories failed. Response: {response}. Trying again...')
+                attempts += 1
                 sleep(10)
 
             except Exception as e:
-                print(f'Attempt {tries} to collect the categories failed. Error: {e}. Trying again...')
-                tries += 1
+                print(f'Attempt {attempts} to collect all categories failed. Error: {e}. Trying again...')
+                attempts += 1
                 sleep(10)
 
     def scraping_books(self: object) -> None:
 
-        for category in self.categories:
-            print(f'Collecting books from the {category["category"]} category...')
-            tries = 0
+        """
+            Function that collects all books from all categories.
+        """
+
+        for index, category in enumerate(self.categories):
+            print(f'Collecting books from the {category["category"]} category. {index + 1} of {len(self.categories)} categories...')
+            attempts = 0
             while True:
-                if tries == 3:
+                if attempts == 3:
                     raise Exception(
-                        f'After 3 attempts, it was not possible to collect the number of pages in this category {category["category"]}.'
+                        f'After 3 failed attempts, it was not possible to collect the number of pages for this category {category["category"]}.'
                     )
 
                 try:
@@ -98,22 +146,22 @@ class BooksScraping:
                             self.pages = int(quantity_items.text) // 20 + 1
                         break
 
-                    print(f'Attempt {tries} to collect the number of pages in this category {category["category"]} failed. Trying again...')
-                    tries += 1
+                    print(f'Attempt {attempts} to collect the number of pages for this category {category["category"]} failed. Response: {response}. Trying again...')
+                    attempts += 1
                     sleep(10)
 
                 except Exception as e:
-                    print(f'Attempt {tries} to collect the number of pages in this category {category["category"]} failed. Error: {e}. Trying again...')
-                    tries += 1
+                    print(f'Attempt {attempts} to collect the number of pages for this category {category["category"]} failed. Error: {e}. Trying again...')
+                    attempts += 1
                     sleep(10)
 
             for page in range(1, self.pages + 1):
                 print(f'Collecting books from page {page} of {self.pages} total pages...')
-                tries = 0
+                attempts = 0
                 while True:
-                    if tries == 3:
+                    if attempts == 3:
                         raise Exception(
-                            f'After 3 attempts, it was not possible to collect books from the category {category["category"]} and page {page}.'
+                            f'After 3 failed attempts, it was not possible to collect books from the category {category["category"]} and page {page}.'
                         )
 
                     try:
@@ -136,27 +184,19 @@ class BooksScraping:
                                 )
                             break
 
-                        print(f'Attempt {tries} to collect books from the category {category["category"]} and page {page} failed. Trying again...')
-                        tries += 1
+                        print(f'Attempt {attempts} to collect books from the category {category["category"]} and page {page} failed. Response: {response}. Trying again...')
+                        attempts += 1
                         sleep(10)
 
                     except Exception as e:
-                        print(f'Attempt {tries} to collect books from the category {category["category"]} and page {page} failed. Error: {e}. Trying again...')
-                        tries += 1
+                        print(f'Attempt {attempts} to collect books from the category {category["category"]} and page {page} failed. Error: {e}. Trying again...')
+                        attempts += 1
                         sleep(10)
 
-if len(sys.argv) > 1:
-    if datetime.now().second < 50:
-        cron = (datetime.now() + timedelta(minutes=1 + int(sys.argv[1]))).strftime('%M %H * * *')
-    else:
-        cron = (datetime.now() + timedelta(minutes=2 + int(sys.argv[1]))).strftime('%M %H * * *')
-else:
-    if datetime.now().second < 50:
-        cron = (datetime.now() + timedelta(minutes=1)).strftime('%M %H * * *')
-    else:
-        cron = (datetime.now() + timedelta(minutes=2)).strftime('%M %H * * *')
-
-print(f'This script will start at {datetime.strptime(cron, "%M %H * * *").strftime("%H:%M")}.')
+additional_minutes = 1 + int(sys.argv[1]) if len(sys.argv) > 1 else 1
+if datetime.now().second >= 50:
+    additional_minutes += 1
+cron = (datetime.now() + timedelta(minutes=additional_minutes)).strftime('%M %H * * *')
 
 @aiocron.crontab(cron, start=True)
 async def start_scraping_books():
@@ -164,9 +204,9 @@ async def start_scraping_books():
     init_time = time()
 
     try:
-        robs = BooksScraping()
+        bot = BooksScraping()
 
-        robs.start()
+        bot.start()
 
     except Exception as e:
         print(f'Fail of the scraping process. Error: {e}.')
@@ -175,14 +215,12 @@ async def start_scraping_books():
         print(f'Scraping process successfully completed in {Fore.GREEN}{time() - init_time}{Fore.RESET} seconds.')
 
     finally:
-        folder_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        directory_report = folder_directory + os.sep + 'TMP' + os.sep + 'books_scraping'
-        if not os.path.exists(directory_report):
-            os.makedirs(directory_report)
+        directory_report = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'TMP', 'books_scraping')
+        os.makedirs(directory_report, exist_ok=True)
 
         print(f'Saving the collected data in an excel report in the {Fore.GREEN}"{directory_report}"{Fore.RESET} directory.')
-        with pd.ExcelWriter(directory_report + os.sep + 'books_scraping.xlsx') as writer:
-            dataframe = pd.DataFrame(robs.books)
+        with pd.ExcelWriter(os.path.join(directory_report, 'books_scraping.xlsx')) as writer:
+            dataframe = pd.DataFrame(bot.books)
             dataframe.to_excel(writer, index=False, sheet_name='books')
 
 loop = asyncio.get_event_loop()
