@@ -31,17 +31,17 @@ class BooksScraping:
 
         Methods
         -------
-            __init__()
-                Constructor that initializes the necessary variables.
+        __init__()
+            Constructor that initializes the necessary variables.
 
-            start()
-                Function responsible for controlling the scraping process.
+        start()
+            Function responsible for controlling the scraping process.
 
-            get_categories()
-                Function that collects all available categories.
+        get_categories()
+            Function that collects all available categories.
 
-            scraping_books()
-                Function that collects all books from all categories.
+        scraping_books()
+            Function that collects all books from all categories.
     """
 
     session: requests.Session = requests.Session()
