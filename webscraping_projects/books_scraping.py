@@ -221,6 +221,7 @@ async def start_scraping_books_initial():
         print(f'Saving the collected data in an excel report in the {Fore.GREEN}"{directory_report}"{Fore.RESET} directory.')
         with pd.ExcelWriter(os.path.join(directory_report, 'books_scraping.xlsx')) as writer:
             dataframe = pd.DataFrame(bot.books)
+            dataframe['created_at'] = datetime.now()
             dataframe.to_excel(writer, index=False, sheet_name='books')
 
         start_scraping_books_initial.stop()
@@ -248,6 +249,7 @@ async def start_scraping_books_recursively():
         print(f'Saving the collected data in an excel report in the {Fore.GREEN}"{directory_report}"{Fore.RESET} directory.')
         with pd.ExcelWriter(os.path.join(directory_report, 'books_scraping.xlsx')) as writer:
             dataframe = pd.DataFrame(bot.books)
+            dataframe['created_at'] = datetime.now()
             dataframe.to_excel(writer, index=False, sheet_name='books')
 
 loop = asyncio.get_event_loop()
