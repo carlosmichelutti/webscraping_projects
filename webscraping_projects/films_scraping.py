@@ -75,7 +75,7 @@ class FilmsScraping:
         while True:
             if attempts == 3:
                 raise Exception(
-                    'After 3 attempts, it was not possible to collect the films.'
+                    'After 3 failed attempts, it was not possible to collect the films.'
                 )
 
             try:
