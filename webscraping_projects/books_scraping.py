@@ -94,7 +94,7 @@ class BooksScraping:
                 )
 
                 if response.status_code == 200:
-                    response = BeautifulSoup(response.content, 'html.parser')
+                    response = BeautifulSoup(response.content, 'lxml', from_encoding='utf-8')
                     for category in response.select('div.side_categories ul:nth-child(2) a[href*="catalogue/category/books"]'):
                         self.categories.append(
                             {
@@ -136,7 +136,7 @@ class BooksScraping:
                     )
 
                     if response.status_code == 200:
-                        response = BeautifulSoup(response.content, 'html.parser')
+                        response = BeautifulSoup(response.content, 'lxml', from_encoding='utf-8')
                         quantity_items = response.select_one('form.form-horizontal strong:nth-child(2)')
                         if not quantity_items or int(quantity_items.text) == 0:
                             self.pages = 0
@@ -170,7 +170,7 @@ class BooksScraping:
                         )
 
                         if response.status_code == 200:
-                            response = BeautifulSoup(response.content, 'html.parser')
+                            response = BeautifulSoup(response.content, 'lxml', from_encoding='utf-8')
                             for book in response.select('article.product_pod'):
                                 self.books.append(
                                     {
