@@ -152,4 +152,11 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-_webscraping_projects/*
+# Agricultural Products Scraping
+TMP/agricultural_products_scraping
+
+# Books Scraping
+TMP/books_scraping
+
+# Films Scraping
+TMP/films_scraping
