@@ -10,6 +10,10 @@ import sys
 import os
 import re
 
+import warnings
+
+warnings.simplefilter('ignore')
+
 class BooksScraping:
 
     """
@@ -176,7 +180,7 @@ class BooksScraping:
                                     {
                                         'category': category['category'],
                                         'book_title': book.select_one('h3 a')['title'],
-                                        'book_price': float(re.sub('[^\d.]', '', book.select_one('div.product_price p.price_color').text)),
+                                        'book_price': float(re.sub(r'[^\d.]', '', book.select_one('div.product_price p.price_color').text)),
                                         'book_image': self.URL + '/media' + book.select_one('div.image_container img')['src'].split('/media')[-1],
                                         'book_rating': ''
                                     }
