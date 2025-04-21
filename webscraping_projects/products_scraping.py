@@ -9,7 +9,37 @@ import json
 import sys
 import os
 
+import warnings
+
+warnings.simplefilter('ignore')
+
 class AgriculturalProductsScraping:
+
+    """
+        Class that scrapes all the films from IMDb.
+
+        Attributes
+        ----------
+        session: requests.Session
+            A request session object used to store cookies and request history.
+
+        URL: str
+            The URL of the website to scrape.
+
+        products: list
+            A list that stores all scraped products.
+
+        Methods
+        -------
+        __init__()
+            Constructor that initializes the necessary variables.
+
+        start()
+            Function responsible for controlling the scraping process.
+
+        scraping_products()
+            Function that collects all products.
+    """
 
     session: requests.Session = requests.Session()
     session.headers.update(
@@ -22,21 +52,33 @@ class AgriculturalProductsScraping:
         self: object
     ) -> None:
 
+        """
+            Constructor that initializes the necessary variables.
+        """
+
         self.URL: str = 'https://www.agrolink.com.br'
 
         self.products: list = []
 
     def start(self: object) -> None:
 
+        """
+            Function responsible for controlling the scraping process.
+        """
+
         self.scraping_products()
 
     def scraping_products(self: object) -> None:
+
+        """
+            Function that collects all products.
+        """
 
         attempts = 0
         while True:
             if attempts == 3:
                 raise Exception(
-                    'After 3 attempts, it was not possible to collect the products.'
+                    'After 3 failed attempts, it was not possible to collect the products.'
                 )
 
             try:
@@ -49,10 +91,10 @@ class AgriculturalProductsScraping:
                     response = json.loads(response.content)
                     [self.products.append(product) for product in response['ViewModel']['produtos']]
                     break
-
-                print(f'Attempt {attempts} to collect the products failed. Response: {response}. Trying again...')
-                attempts += 1
-                sleep(10)
+                else:
+                    print(f'Attempt {attempts} to collect the products failed. Response: {response}. Trying again...')
+                    attempts += 1
+                    sleep(10)
 
             except Exception as e:
                 print(f'Attempt {attempts} to collect the products failed. Error: {e}. Trying again...')
