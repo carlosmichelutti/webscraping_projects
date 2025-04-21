@@ -10,6 +10,10 @@ import sys
 import os
 import re
 
+import warnings
+
+warnings.simplefilter('ignore')
+
 class FilmsScraping:
 
     """
@@ -101,10 +105,10 @@ class FilmsScraping:
                             }
                         )
                     break
-
-                print(f'Attempt {attempts} to collect the films failed. Response: {response}. Trying again...')
-                attempts += 1
-                sleep(10)
+                else:
+                    print(f'Attempt {attempts} to collect the films failed. Response: {response}. Trying again...')
+                    attempts += 1
+                    sleep(10)
 
             except Exception as e:
                 print(f'Attempt {attempts} to collect the films failed. Error: {e}. Trying again...')
